@@ -6,10 +6,52 @@
  * Version:           1.0.0
  * Requires at least: 5.5
  * Requires PHP:      7.4
- * Author:            Your Name
- * Author URI:        https://your-portfolio-or-linkedin.com/
+ * Author:            Adekunle Kehinde Fisayo
+ * Author URI:        https://#
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       wp-barq
  * Domain Path:       /languages
  */
+
+// Enqueue Admin Assets
+add_action('admin_enqueue_scripts', 'wp_barq_enqueue_assets');
+function wp_barq_enqueue_assets($hook) {
+    // Only load assets on our plugin dashboard page
+    if ($hook !== 'toplevel_page_wp-barq-dashboard') return;
+
+    // Tailwind via CDN (official)
+    wp_enqueue_script(
+        'tailwindcdn',
+        'https://cdn.tailwindcss.com',
+        [],
+        null,
+        false // Load in <head>
+    );
+
+    // Optional Tailwind Config (inline)
+    wp_add_inline_script('tailwindcdn', "tailwind.config = { theme: { extend: { colors: { primary: '#f6b100' } } } };");
+
+    // Your custom styles and scripts
+    wp_enqueue_style('wp-barq-style', plugin_dir_url(__FILE__) . 'assets/css/style.css');
+    wp_enqueue_script('wp-barq-script', plugin_dir_url(__FILE__) . 'assets/js/script.js', [], null, true);
+}
+
+// Add Admin Menu Page
+add_action('admin_menu', 'wp_barq_add_menu');
+function wp_barq_add_menu() {
+    add_menu_page(
+        'WP BARQ Dashboard',          // Page Title
+        'WP BARQ',                    // Menu Title
+        'manage_options',            // Capability
+        'wp-barq-dashboard',         // Menu Slug
+        'wp_barq_dashboard_page',    // Callback function
+        'dashicons-shield-alt',      // Icon
+        25                           // Position
+    );
+}
+
+// Render Dashboard Page
+function wp_barq_dashboard_page() {
+    include plugin_dir_path(__FILE__) . 'templates/dashboard.php';
+}
