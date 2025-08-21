@@ -14,7 +14,6 @@
  * Domain Path:       /languages
  */
 
-// Enqueue Admin Assets
 add_action('admin_enqueue_scripts', 'wp_barq_enqueue_assets');
 function wp_barq_enqueue_assets($hook) {
     // Only load assets on our plugin dashboard page
@@ -26,13 +25,11 @@ function wp_barq_enqueue_assets($hook) {
         'https://cdn.tailwindcss.com',
         [],
         null,
-        false // Load in <head>
+        false 
     );
 
-    // Optional Tailwind Config (inline)
     wp_add_inline_script('tailwindcdn', "tailwind.config = { theme: { extend: { colors: { primary: '#f6b100' } } } };");
 
-    // Your custom styles and scripts
     wp_enqueue_style('wp-barq-style', plugin_dir_url(__FILE__) . 'assets/css/style.css');
     wp_enqueue_script('wp-barq-script', plugin_dir_url(__FILE__) . 'assets/js/script.js', [], null, true);
 }
@@ -41,13 +38,13 @@ function wp_barq_enqueue_assets($hook) {
 add_action('admin_menu', 'wp_barq_add_menu');
 function wp_barq_add_menu() {
     add_menu_page(
-        'WP BARQ Dashboard',          // Page Title
-        'WP BARQ',                    // Menu Title
-        'manage_options',            // Capability
-        'wp-barq-dashboard',         // Menu Slug
-        'wp_barq_dashboard_page',    // Callback function
-        'dashicons-shield-alt',      // Icon
-        25                           // Position
+        'WP BARQ Dashboard',          
+        'WP BARQ',                    
+        'manage_options',            
+        'wp-barq-dashboard',         
+        'wp_barq_dashboard_page',    
+        'dashicons-shield-alt',      
+        25                        
     );
 }
 
