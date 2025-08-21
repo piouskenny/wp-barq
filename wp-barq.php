@@ -14,6 +14,10 @@
  * Domain Path:       /languages
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 add_action('admin_enqueue_scripts', 'wp_barq_enqueue_assets');
 function wp_barq_enqueue_assets($hook) {
     // Only load assets on our plugin dashboard page
@@ -48,7 +52,36 @@ function wp_barq_add_menu() {
     );
 }
 
-// Render Dashboard Page
 function wp_barq_dashboard_page() {
     include plugin_dir_path(__FILE__) . 'templates/dashboard.php';
+}
+
+register_activation_hook( __FILE__, 'wp_barq_activate' );
+
+function wp_barq_activate() {
+     global $wpdb;
+
+    $table_name = $wpdb->prefix . 'barq_logs'; 
+    $charset_collate = $wpdb->get_charset_collate();
+
+
+    $sql = "CREATE TABLE $table_name (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        error_type varchar(100) NOT NULL,
+        source varchar(191) NOT NULL,
+        message text NOT NULL,
+        severity varchar(20) NOT NULL,
+        status varchar(20) DEFAULT 'open' NOT NULL,
+        created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) $charset_collate;";
+
+    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    dbDelta( $sql );
+}
+
+register_deactivation_hook( __FILE__, 'wp_barq_deactivate' );
+
+function wp_barq_deactivate() {
+    // Placeholder: clean up tasks when plugin is deactivated
 }
